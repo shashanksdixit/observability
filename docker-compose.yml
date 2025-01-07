@@ -21,7 +21,7 @@ services:
     environment:
       OTEL_SERVICE_NAME: "service2"
       OTEL_TRACES_EXPORTER: "jaeger" #, zipkin"
-     OTEL_EXPORTER_JAEGER_ENDPOINT: "http://jaeger:14250"
+      OTEL_EXPORTER_JAEGER_ENDPOINT: "http://jaeger:14250"
  #     OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
       OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
