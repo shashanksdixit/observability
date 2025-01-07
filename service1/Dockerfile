@@ -1,9 +1,9 @@
 FROM eclipse-temurin:17-jre
 
 COPY target/service-1-0.0.1.jar /app.jar
-COPY opentelemetry-javaagent-all.jar /opentelemetry-javaagent-all.jar
+COPY opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
 
-ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent-all.jar", \
+ENTRYPOINT ["java", "-javaagent:opentelemetry-javaagent.jar", \
         "-jar", "app.jar"]
 
 EXPOSE 8081

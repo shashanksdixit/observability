@@ -23,3 +23,9 @@ http://localhost:9090
 # Grafana
 http://localhost:3000
 Import dashboard - https://grafana.com/grafana/dashboards/18812-jvm-overview-opentelemetry/
+
+# Docker 
+
+docker compose up
+docker compose up --force-recreate // (In case of n/w error)
+docker rmi -f $(docker images -aq) // to remove all images
