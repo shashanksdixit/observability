@@ -1,0 +1,32 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+                allowed_origins:
+                  - "http://*"
+                  - "https://*"
+
+exporters:
+  debug:
+    verbosity: "detailed"
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  otlphttp:
+    endpoint: "http://jaeger:4318"
+    tls:
+      insecure: true
+
+processors:
+  batch:
+
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp, otlphttp]      

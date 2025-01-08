@@ -3,9 +3,8 @@ services:
     build: ./service1
     environment:
       OTEL_SERVICE_NAME: "service1"
-      OTEL_TRACES_EXPORTER: "jaeger" # , zipkin"
-#      OTEL_TRACES_EXPORTER: "logging"
-      OTEL_EXPORTER_JAEGER_ENDPOINT: "http://jaeger:14250"
+      OTEL_TRACES_EXPORTER: "otlp" # , zipkin"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
 #      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
       OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
@@ -21,9 +20,8 @@ services:
     build: ./service2
     environment:
       OTEL_SERVICE_NAME: "service2"
-      OTEL_TRACES_EXPORTER: "jaeger" #, zipkin"
-#      OTEL_TRACES_EXPORTER: "logging"
-      OTEL_EXPORTER_JAEGER_ENDPOINT: "http://jaeger:14250"
+      OTEL_TRACES_EXPORTER: "otlp" #, zipkin"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
 #      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
       OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
@@ -39,10 +37,8 @@ services:
     build: ./service3
     environment:
       OTEL_SERVICE_NAME: "service3"
-      OTEL_TRACES_EXPORTER: "jaeger" #, zipkin"
-#      OTEL_TRACES_EXPORTER: "logging"
-      OTEL_EXPORTER_JAEGER_ENDPOINT: "http://jaeger:14250"
-#      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
+      OTEL_TRACES_EXPORTER: "otlp" #, zipkin"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
 #      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
       OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
@@ -91,12 +87,17 @@ services:
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one
+    # image: jaegertracing/jaeger:2.1.0
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     restart: always
     ports:
       - "16686:16686"
       - "14250:14250"
+      - "5778:5778" 
+      - "9411:9411" 
+    depends_on:
+      - otel-collector
 
   # zipkin:
   #   container_name: zipkin
@@ -105,12 +106,13 @@ services:
   #   ports:
   #     - "9411:9411"
 
-  # otel-collector:
-  #   image: otel/opentelemetry-collector:latest
-  #   ports:
-  #     - "4317:4317"
-  #   volumes:
-  #     - ./otel-collector-config.yml:/etc/otel-collector-config.yml
-  #   depends_on:
-  #     - jaeger
-  #     - zipkin
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+        - ./docker/otel-collector/otel-collector-config.yml:/etc/otel-collector-config.yml
+      # - zipkin
