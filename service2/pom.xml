@@ -56,11 +56,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-jaeger</artifactId>
-			<version>1.34.1</version>
-		</dependency>
 
 	</dependencies>
 
