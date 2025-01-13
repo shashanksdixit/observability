@@ -28,9 +28,16 @@ Import dashboard - https://grafana.com/grafana/dashboards/18812-jvm-overview-ope
 http://localhost:16686
 In the Service dropdown, there three services, service1, service2, service3 should be listed.
 
+# Loki
+Login in Grafana
+Got to Datasources -> Loki
+Click on Explore.
+Choose Lable filters and select value. Click Run query.
+
 # Docker - Useful commands
 
 docker compose up -d
 docker compose up --force-recreate // (In case of n/w error)
 docker rmi -f $(docker images -aq) // to remove all images
 docker logs <image-name>
+docker compose down
