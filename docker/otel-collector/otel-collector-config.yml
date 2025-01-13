@@ -17,8 +17,12 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+  # otlphttp:
+  #   endpoint: "http://jaeger:4318"
+  #   tls:
+  #     insecure: true
   otlphttp:
-    endpoint: "http://jaeger:4318"
+    endpoint: "http://loki:3100"
     tls:
       insecure: true
 

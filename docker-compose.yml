@@ -3,13 +3,13 @@ services:
     build: ./service1
     environment:
       OTEL_SERVICE_NAME: "service1"
-      OTEL_TRACES_EXPORTER: "otlp" # , zipkin"
+      OTEL_TRACES_EXPORTER: "otlp"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-#      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
-      OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
       OTEL_EXPORTER_PROMETHEUS_HOST: "0.0.0.0"
       OTEL_EXPORTER_PROMETHEUS_PORT: "9464"
+      OTEL_LOGS_EXPORTER: "otlp"
+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: "http://otel-collector:4318/otlp"
     ports:
       - "8081:8081"
     container_name: service1
@@ -20,13 +20,13 @@ services:
     build: ./service2
     environment:
       OTEL_SERVICE_NAME: "service2"
-      OTEL_TRACES_EXPORTER: "otlp" #, zipkin"
+      OTEL_TRACES_EXPORTER: "otlp"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-#      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
-      OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
       OTEL_EXPORTER_PROMETHEUS_HOST: "0.0.0.0"
       OTEL_EXPORTER_PROMETHEUS_PORT: "9464"
+      OTEL_LOGS_EXPORTER: "otlp"
+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: "http://otel-collector:4318/otlp"
     ports:
       - "8082:8082"
     container_name: service2
@@ -37,24 +37,18 @@ services:
     build: ./service3
     environment:
       OTEL_SERVICE_NAME: "service3"
-      OTEL_TRACES_EXPORTER: "otlp" #, zipkin"
+      OTEL_TRACES_EXPORTER: "otlp"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-#      OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://zipkin:9411/api/v2/spans"
-      OTEL_LOGS_EXPORTER: "logging"
       OTEL_METRICS_EXPORTER: "prometheus"
       OTEL_EXPORTER_PROMETHEUS_HOST: "0.0.0.0"
       OTEL_EXPORTER_PROMETHEUS_PORT: "9464"
+      OTEL_LOGS_EXPORTER: "otlp"
+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: "http://otel-collector:4318/otlp"
     container_name: service3
     depends_on:
       - jaeger
-      # - zipkin
     ports:
       - "8083:8083"
-
-  # loki:
-  #   image: grafana/loki:latest
-  #   ports:
-  #     - "3100:3100"
 
   prometheus:
     image: prom/prometheus:latest
@@ -86,7 +80,6 @@ services:
 
   jaeger:
     container_name: jaeger
-    # image: jaegertracing/all-in-one
     image: jaegertracing/jaeger:latest
     environment:
       - COLLECTOR_OTLP_ENABLED=true
@@ -101,13 +94,7 @@ services:
     depends_on:
       - otel-collector
 
-  # zipkin:
-  #   container_name: zipkin
-  #   image: openzipkin/zipkin
-  #   restart: always
-  #   ports:
-  #     - "9411:9411"
-
+  
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
@@ -117,4 +104,15 @@ services:
       - "4318:4318"
     volumes:
         - ./docker/otel-collector/otel-collector-config.yml:/etc/otel-collector-config.yml
-      # - zipkin
+    depends_on:
+      - loki
+
+  loki:
+    image: grafana/loki:main
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./docker/loki/loki-config.yml:/etc/loki/local-config.yml
+    command: -config.file=/etc/loki/local-config.yml
+  
