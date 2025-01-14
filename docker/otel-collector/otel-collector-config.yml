@@ -17,14 +17,15 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+
   # otlphttp:
   #   endpoint: "http://jaeger:4318"
   #   tls:
   #     insecure: true
-  otlphttp:
-    endpoint: "http://loki:3100/otlp/v1/logs"
-    tls:
-      insecure: true
+  # otlphttp:
+  #   endpoint: "http://loki:3100/otlp/v1/logs"
+  #   tls:
+  #     insecure: true
 
 processors:
   batch:
@@ -34,5 +35,5 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp, otlphttp]      
+      # processors: [batch]
+      exporters: [debug, otlp] #, otlphttp]      
