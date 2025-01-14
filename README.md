@@ -1,5 +1,6 @@
 # observability
 #springboot #java #loki #prometheus #grafana
+This is a demonstration of observability with Java and OpenTelemetry, utilizing the Java Agent for zero code instrumentation.
 
 # Running Instructions
 Download opentelemetry-javaagent-all v1.3.1
